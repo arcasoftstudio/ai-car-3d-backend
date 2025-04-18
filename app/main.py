@@ -7,8 +7,8 @@ from scripts.run_meshroom import run_meshroom
 
 app = FastAPI()
 
-UPLOAD_DIR = "/app/uploads"
-OUTPUT_DIR = "/app/outputs"
+UPLOAD_DIR = "/workspace/uploads"
+OUTPUT_DIR = "/workspace/outputs"
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
