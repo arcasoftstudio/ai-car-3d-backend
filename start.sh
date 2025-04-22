@@ -12,7 +12,7 @@ pip3 install -r /workspace/ai-car-3d-backend/requirements.txt
 
 echo "📦 Scarico e installo Meshroom..."
 cd /workspace
-wget https://github.com/alicevision/meshroom/releases/download/v2021.1.0/Meshroom-2021.1.0-linux.tar.gz
+wget https://downloads.sourceforge.net/project/meshroom/2021.1.0/Meshroom-2021.1.0-linux.tar.gz
 tar -xzf Meshroom-2021.1.0-linux.tar.gz
 mv Meshroom-2021.1.0 /opt/meshroom
 export PATH="/opt/meshroom:$PATH"
