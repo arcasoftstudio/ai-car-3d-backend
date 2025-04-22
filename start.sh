@@ -18,6 +18,11 @@ wget https://huggingface.co/ArcaSoftSrudio/ai-car-business/resolve/main/Meshroom
 echo "📂 Estrazione Meshroom..."
 mkdir -p /opt/meshroom
 tar -xzf Meshroom-2021.1.0-linux-cuda10.tar.gz -C /opt/meshroom --strip-components=1 --no-same-owner
+
+echo "🔐 Rendo meshroom_photogrammetry eseguibile..."
+chmod +x /opt/meshroom/meshroom_photogrammetry
+
+echo "🔗 Creo link simbolico globale..."
 ln -sf /opt/meshroom/meshroom_photogrammetry /usr/local/bin/meshroom_photogrammetry
 
 echo "🚀 Avvio FastAPI sulla porta 8000..."
