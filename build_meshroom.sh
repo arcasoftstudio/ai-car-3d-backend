@@ -1,8 +1,14 @@
 #!/bin/bash
 set -e
 
+echo "🔧 Imposto modalità non interattiva per apt..."
+export DEBIAN_FRONTEND=noninteractive
+export TZ=Etc/UTC
+ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+
 echo "🔧 Aggiorno e installo dipendenze..."
-apt update && apt install -y \
+apt update && apt install -y tzdata && dpkg-reconfigure -f noninteractive tzdata
+apt install -y \
     git cmake build-essential libboost-all-dev libeigen3-dev libopenimageio-dev \
     libpng-dev libjpeg-dev libtiff-dev libraw-dev libopenexr-dev \
     libopencv-dev qtbase5-dev libglew-dev
