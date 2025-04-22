@@ -19,14 +19,16 @@ echo "📂 Estrazione Meshroom..."
 mkdir -p /opt/meshroom
 tar -xzf Meshroom-2021.1.0-linux-cuda10.tar.gz -C /opt/meshroom --no-same-owner
 
-echo "🗂️ Contenuto estratto:"
-ls -l /opt/meshroom
+echo "🔎 Cerco meshroom_photogrammetry nel filesystem..."
+BIN_PATH=$(find /opt/meshroom -type f -name "meshroom_photogrammetry" | head -n 1)
 
-echo "🔐 Rendo eseguibile meshroom_photogrammetry..."
-chmod +x /opt/meshroom/Meshroom-*/meshroom_photogrammetry || echo "❌ File non trovato"
-
-echo "🔗 Creo link simbolico globale..."
-ln -sf /opt/meshroom/Meshroom-*/meshroom_photogrammetry /usr/local/bin/meshroom_photogrammetry
+if [ -z "$BIN_PATH" ]; then
+    echo "❌ meshroom_photogrammetry non trovato!"
+else
+    echo "✅ Trovato: $BIN_PATH"
+    chmod +x "$BIN_PATH"
+    ln -sf "$BIN_PATH" /usr/local/bin/meshroom_photogrammetry
+fi
 
 echo "🚀 Avvio FastAPI sulla porta 8000..."
 cd /workspace/ai-car-3d-backend
