@@ -11,9 +11,9 @@ echo "🐍 Upgrade pip e installo requirements Python..."
 pip3 install --upgrade pip
 pip3 install -r /workspace/ai-car-3d-backend/requirements.txt
 
-echo "📦 Scarico Meshroom da Hugging Face..."
+echo "📦 Scarico Meshroom 2023.3.0 da Hugging Face..."
 cd /workspace
-wget https://huggingface.co/ArcaSoftSrudio/ai-car-business/resolve/main/Meshroom-2021.1.0-linux-cuda10.tar.gz -O Meshroom.tar.gz
+wget https://huggingface.co/ArcaSoftSrudio/ai-car-business/resolve/main/Meshroom-2023.3.0-linux.tar.gz -O Meshroom.tar.gz
 
 echo "📂 Estrazione Meshroom..."
 mkdir -p /opt/meshroom
@@ -24,6 +24,7 @@ BIN_PATH=$(find /opt/meshroom -type f -name "meshroom_photogrammetry" | head -n 
 
 if [ -z "$BIN_PATH" ]; then
     echo "❌ meshroom_photogrammetry non trovato!"
+    exit 1
 else
     echo "✅ Trovato: $BIN_PATH"
     chmod +x "$BIN_PATH"
