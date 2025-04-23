@@ -1,11 +1,17 @@
 #!/bin/bash
 set -e
-
 export DEBIAN_FRONTEND=noninteractive
-echo "✅xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATO"
 
-echo "🧱 Installo dipendenze di sistema base..."
-apt update && apt install -y python3-pip git libgl1 libglib2.0-0 build-essential wget unzip curl
+echo "🧹 Pulizia iniziale..."
+rm -rf /workspace/AliceVision /workspace/Meshroom-2023.3.0 /workspace/nanoflann /workspace/input_images /workspace/output_model
+
+echo "📦 Installo dipendenze di sistema..."
+apt update && apt install -y \
+  python3-pip git wget unzip curl \
+  build-essential cmake libgl1 libglib2.0-0 \
+  libpng-dev libjpeg-dev libtiff-dev \
+  libboost-all-dev qtbase5-dev \
+  libopenexr-dev zlib1g-dev
 
 echo "🐍 Installo pip e requirements Python..."
 pip3 install --upgrade pip
