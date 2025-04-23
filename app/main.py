@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
+from typing import List
 import shutil
 import uuid
 import os
@@ -14,7 +15,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 @app.post("/upload")
-async def upload_images(files: list[UploadFile] = File(...)):
+async def upload_images(files: List[UploadFile] = File(...)):
     session_id = str(uuid.uuid4())
     session_path = os.path.join(UPLOAD_DIR, session_id)
     os.makedirs(session_path, exist_ok=True)
