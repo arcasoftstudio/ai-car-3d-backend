@@ -14,8 +14,7 @@ apt update && apt install -y \
     libatlas-base-dev libopencv-dev \
     libfreeimage-dev libflann-dev \
     libsqlite3-dev libceres-dev libcgal-dev \
-    libgflags-dev libgoogle-glog-dev
-
+    libgflags-dev libgoogle-glog-dev libmetis-dev
 
 
 echo "📥 Clonazione COLMAP..."
