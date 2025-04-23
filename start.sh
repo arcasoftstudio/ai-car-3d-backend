@@ -1,23 +1,26 @@
 #!/bin/bash
 
-# Non interattivo
+set -e
 export DEBIAN_FRONTEND=noninteractive
 
-# Aggiorna pacchetti e installa dipendenze
+echo "🔧 Aggiornamento sistema e installazione dipendenze..."
 apt update && apt install -y \
     git cmake build-essential wget unzip \
     libboost-all-dev libeigen3-dev libsuitesparse-dev \
     qtbase5-dev libglew-dev freeglut3-dev \
-    libatlas-base-dev libopencv-dev
+    libatlas-base-dev libopencv-dev \
+    libfreeimage-dev
 
-# Installa COLMAP
+echo "📥 Clonazione COLMAP..."
 git clone https://github.com/colmap/colmap.git /workspace/colmap
+
+echo "⚙️ Compilazione COLMAP..."
 cd /workspace/colmap
 mkdir build && cd build
 cmake ..
 make -j8
 make install
 
-# Torna alla root del progetto
+echo "🚀 Avvio FastAPI..."
 cd /workspace
 uvicorn app.main:app --host 0.0.0.0 --port 8000
