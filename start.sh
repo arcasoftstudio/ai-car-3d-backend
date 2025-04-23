@@ -31,5 +31,6 @@ make -j8
 make install
 
 echo "🚀 Avvio FastAPI..."
-cd /workspace
+cd /workspace/ai-car-3d-backend
 uvicorn app.main:app --host 0.0.0.0 --port 8000
+
