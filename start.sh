@@ -28,6 +28,10 @@ fi
 
 echo "🔧 Compilo AliceVision con build_meshroom.sh..."
 cd /workspace/ai-car-3d-backend
+echo "📥 Clono nanoflann (per AliceVision)..."
+cd /workspace
+git clone https://github.com/jlblancoc/nanoflann.git
+
 chmod +x build_meshroom.sh
 bash build_meshroom.sh
 
