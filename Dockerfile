@@ -16,7 +16,8 @@ RUN apt-get update && \
 
 # Installa dipendenze Python
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python3.10 -m pip install --no-cache-dir -r requirements.txt
+
 
 # Installa Meshroom (precompilato)
 RUN wget https://github.com/alicevision/meshroom/releases/download/v2023.2.0/Meshroom-2023.2.0-linux-cuda.tar.gz && \
