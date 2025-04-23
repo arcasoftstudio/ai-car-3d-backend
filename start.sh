@@ -3,6 +3,9 @@
 set -e
 export DEBIAN_FRONTEND=noninteractive
 
+# ❌ Pulisce eventuali cartelle da tentativi precedenti
+rm -rf /workspace/colmap /workspace/uploads /workspace/outputs
+
 echo "🔧 Aggiornamento sistema e installazione dipendenze..."
 apt update && apt install -y \
     git cmake build-essential wget unzip \
@@ -10,6 +13,7 @@ apt update && apt install -y \
     qtbase5-dev libglew-dev freeglut3-dev \
     libatlas-base-dev libopencv-dev \
     libfreeimage-dev libflann-dev
+
 
 
 echo "📥 Clonazione COLMAP..."
