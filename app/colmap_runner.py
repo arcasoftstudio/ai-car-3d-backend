@@ -25,11 +25,15 @@ def run_colmap_pipeline(input_dir, output_dir):
 
     print("🏗️ Ricostruzione sparsa...")
     subprocess.run([
-        "colmap", "mapper",
-        "--database_path", database_path,
-        "--image_path", input_dir,
-        "--output_path", sparse_dir
-    ], check=True)
+    "colmap", "mapper",
+    "--database_path", database_path,
+    "--image_path", input_dir,
+    "--output_path", sparse_dir,
+    "--Mapper.num_threads", "4",
+    "--Mapper.init_min_tri_angle", "4.0",
+    "--Mapper.min_num_matches", "15"
+], check=True)
+
 
     print("🎯 Conversione in PLY...")
     subprocess.run([
