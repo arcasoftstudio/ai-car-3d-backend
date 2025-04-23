@@ -9,7 +9,8 @@ apt update && apt install -y \
     libboost-all-dev libeigen3-dev libsuitesparse-dev \
     qtbase5-dev libglew-dev freeglut3-dev \
     libatlas-base-dev libopencv-dev \
-    libfreeimage-dev
+    libfreeimage-dev libflann-dev
+
 
 echo "📥 Clonazione COLMAP..."
 git clone https://github.com/colmap/colmap.git /workspace/colmap
