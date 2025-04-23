@@ -19,7 +19,7 @@ cd AliceVision
 mkdir build && cd build
 
 echo "🛠️ Compilo AliceVision (potrebbe impiegare 10–15 min)..."
-cmake .. -DCMAKE_BUILD_TYPE=Release -DALICEVISION_USE_CUDA=ON
+cmake .. -DCMAKE_BUILD_TYPE=Release -DALICEVISION_USE_CUDA=ON -Dnanoflann_DIR=/workspace/nanoflann
 make -j$(nproc)
 
 echo "✅ Compilato. File pronto in:"
