@@ -32,8 +32,10 @@ echo "📥 Clono nanoflann (per AliceVision)..."
 cd /workspace
 git clone https://github.com/jlblancoc/nanoflann.git
 
+cd /workspace/ai-car-3d-backend
 chmod +x build_meshroom.sh
 bash build_meshroom.sh
+
 
 echo "🔗 Creo link simbolico per meshroom_photogrammetry..."
 ln -sf /workspace/ai-car-3d-backend/AliceVision/build/install/bin/meshroom_photogrammetry /usr/local/bin/meshroom_photogrammetry
