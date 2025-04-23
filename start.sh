@@ -12,7 +12,9 @@ apt update && apt install -y \
     libboost-all-dev libeigen3-dev libsuitesparse-dev \
     qtbase5-dev libglew-dev freeglut3-dev \
     libatlas-base-dev libopencv-dev \
-    libfreeimage-dev libflann-dev
+    libfreeimage-dev libflann-dev \
+    libsqlite3-dev
+
 
 
 
