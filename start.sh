@@ -10,8 +10,8 @@ apt update && apt install -y \
   python3-pip git wget unzip curl \
   build-essential cmake libgl1 libglib2.0-0 \
   libpng-dev libjpeg-dev libtiff-dev \
-  libboost-all-dev qtbase5-dev \
-  libopenexr-dev zlib1g-dev
+  libboost-all-dev libboost-system-dev libboost-thread-dev \
+  qtbase5-dev libopenexr-dev zlib1g-dev
 
 echo "🐍 Installo pip e requirements Python..."
 pip3 install --upgrade pip
@@ -26,15 +26,18 @@ if [ ! -d Meshroom-2023.3.0 ]; then
 fi
 
 
-echo "🔧 Compilo AliceVision con build_meshroom.sh..."
-cd /workspace/ai-car-3d-backend
 echo "📥 Clono nanoflann (per AliceVision)..."
 cd /workspace
 git clone https://github.com/jlblancoc/nanoflann.git
 
+echo "📦 Copio nanoflann.hpp dove può trovarlo cmake..."
+mkdir -p /usr/local/include/nanoflann
+cp /workspace/nanoflann/include/nanoflann.hpp /usr/local/include/nanoflann/
+
 cd /workspace/ai-car-3d-backend
 chmod +x build_meshroom.sh
 bash build_meshroom.sh
+
 
 
 echo "🔗 Creo link simbolico per meshroom_photogrammetry..."
