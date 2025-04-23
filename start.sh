@@ -2,7 +2,7 @@
 set -e
 
 export DEBIAN_FRONTEND=noninteractive
-echo "✅ START.SH INIZIATO"
+echo "✅xAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATO"
 
 echo "🧱 Installo dipendenze di sistema base..."
 apt update && apt install -y python3-pip git libgl1 libglib2.0-0 build-essential wget unzip curl
