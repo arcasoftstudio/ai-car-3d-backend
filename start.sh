@@ -3,12 +3,12 @@
 set -e
 export DEBIAN_FRONTEND=noninteractive
 
-# ❌ Pulisce eventuali cartelle da tentativi precedenti
+# ❌ Pulizia
 rm -rf /workspace/colmap /workspace/uploads /workspace/outputs
 
-echo "🔧 Aggiornamento sistema e installazione dipendenze..."
+echo "🔧 Installazione dipendenze di sistema..."
 apt update && apt install -y \
-    git cmake build-essential wget unzip \
+    git cmake build-essential wget unzip python3-pip \
     libboost-all-dev libeigen3-dev libsuitesparse-dev \
     qtbase5-dev libglew-dev freeglut3-dev \
     libatlas-base-dev libopencv-dev \
@@ -16,6 +16,9 @@ apt update && apt install -y \
     libsqlite3-dev libceres-dev libcgal-dev \
     libgflags-dev libgoogle-glog-dev libmetis-dev
 
+echo "🐍 Installazione dipendenze Python..."
+pip install --upgrade pip
+pip install -r /workspace/ai-car-3d-backend/requirements.txt
 
 echo "📥 Clonazione COLMAP..."
 git clone https://github.com/colmap/colmap.git /workspace/colmap
