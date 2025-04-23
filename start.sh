@@ -11,7 +11,9 @@ apt update && apt install -y \
   build-essential cmake libgl1 libglib2.0-0 \
   libpng-dev libjpeg-dev libtiff-dev \
   libboost-all-dev libboost-system-dev libboost-thread-dev \
-  qtbase5-dev libopenexr-dev zlib1g-dev
+  qtbase5-dev libopenexr-dev zlib1g-dev \
+  openimageio-tools
+
 
 echo "🐍 Installo pip e requirements Python..."
 pip3 install --upgrade pip
