@@ -3,21 +3,19 @@ FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
 # Evita prompt durante installazione
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Installa dipendenze
+# Installa Python + dipendenze di sistema
 RUN apt-get update && \
-    apt-get install -y python3-pip python3.10 python3.10-dev wget git unzip curl \
+    apt-get install -y python3 python3-dev python3-pip wget git unzip curl \
     libgl1-mesa-glx libglib2.0-0 libpng-dev libjpeg-dev libtiff-dev \
     libopencv-dev python3-opencv \
     qt5-default libqt5x11extras5-dev \
     libx11-dev && \
-    ln -s /usr/bin/python3.10 /usr/bin/python && \
-    pip install --upgrade pip && \
     rm -rf /var/lib/apt/lists/*
 
 # Installa dipendenze Python
 COPY requirements.txt .
-RUN python3.10 -m pip install --no-cache-dir -r requirements.txt
-
+RUN python3 -m pip install --no-cache-dir --upgrade pip && \
+    python3 -m pip install --no-cache-dir -r requirements.txt
 
 # Installa Meshroom (precompilato)
 RUN wget https://github.com/alicevision/meshroom/releases/download/v2023.2.0/Meshroom-2023.2.0-linux-cuda.tar.gz && \
