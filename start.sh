@@ -13,7 +13,9 @@ apt update && apt install -y \
     qtbase5-dev libglew-dev freeglut3-dev \
     libatlas-base-dev libopencv-dev \
     libfreeimage-dev libflann-dev \
-    libsqlite3-dev libceres-dev libcgal-dev
+    libsqlite3-dev libceres-dev libcgal-dev \
+    libgflags-dev libgoogle-glog-dev
+
 
 
 echo "📥 Clonazione COLMAP..."
