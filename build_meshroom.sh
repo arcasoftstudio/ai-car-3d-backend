@@ -9,7 +9,9 @@ ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 echo "🔧 Aggiorno e installo dipendenze..."
 apt update && apt install -y tzdata && dpkg-reconfigure -f noninteractive tzdata
 apt install -y \
-    git cmake build-essential libboost-all-dev libeigen3-dev libopenimageio-dev \
+    git cmake build-essential \
+    libboost-all-dev libboost-system-dev libboost-thread-dev \
+    libeigen3-dev libopenimageio-dev openimageio-tools \
     libpng-dev libjpeg-dev libtiff-dev libraw-dev libopenexr-dev \
     libopencv-dev qtbase5-dev libglew-dev
 
