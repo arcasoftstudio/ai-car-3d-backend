@@ -33,7 +33,7 @@ COPY . /app
 WORKDIR /app
 
 # Rendi eseguibile lo script di avvio
-RUN chmod +x start.sh
+RUN chmod +x /app/start.sh
 
 # Avvio
 ENTRYPOINT ["./start.sh"]
