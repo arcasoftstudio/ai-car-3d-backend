@@ -11,6 +11,14 @@ echo "🐍 Installo pip e requirements Python..."
 pip3 install --upgrade pip
 pip3 install -r /workspace/ai-car-3d-backend/requirements.txt
 
+echo "📦 Scarico Meshroom da Hugging Face (se non già presente)..."
+cd /workspace
+if [ ! -d Meshroom-2023.3.0 ]; then
+  wget -q https://huggingface.co/ArcaSoftSrudio/ai-car-business/resolve/main/Meshroom-2023.3.0-linux.tar.gz -O meshroom.tar.gz
+  tar -xzf meshroom.tar.gz
+  rm meshroom.tar.gz
+fi
+
 echo "🔧 Compilo AliceVision con build_meshroom.sh..."
 cd /workspace/ai-car-3d-backend
 chmod +x build_meshroom.sh
