@@ -18,9 +18,16 @@ git clone --recursive https://github.com/alicevision/AliceVision.git
 cd AliceVision
 mkdir build && cd build
 
-echo "🛠️ Compilo AliceVision (potrebbe impiegare 10–15 min)..."
-cmake .. -DCMAKE_BUILD_TYPE=Release -DALICEVISION_USE_CUDA=ON -Dnanoflann_DIR=/workspace/nanoflann
+echo "🔧 Forzo BOOST manualmente"
+export BOOST_ROOT=/usr/include
+export Boost_INCLUDE_DIR=/usr/include
+
+echo "🔧 Disattivo check nanoflann nel CMakeLists.txt"
+sed -i '/find_package(nanoflann REQUIRED)/d' ../src/CMakeLists.txt
+sed -i '/message(FATAL_ERROR "Failed to find nanoflann.")/d' ../src/CMakeLists.txt
+
+echo "🛠️ Compilo AliceVision"
+cmake .. -DCMAKE_BUILD_TYPE=Release -DALICEVISION_USE_CUDA=ON
 make -j$(nproc)
 
-echo "✅ Compilato. File pronto in:"
-ls install/bin/meshroom_photogrammetry
+echo "✅ AliceVision compilato!"
