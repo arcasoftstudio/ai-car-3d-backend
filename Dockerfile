@@ -1,38 +1,27 @@
-FROM nvidia/cuda:11.8.0-devel-ubuntu22.04
+FROM nvidia/cuda:11.7.1-devel-ubuntu20.04
 
-# Evita prompt durante installazione
+# Imposta variabili e aggiorna sistema
 ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /workspace
 
-# Installa Python + dipendenze di sistema
-RUN apt-get update && \
-    apt-get install -y python3 python3-dev python3-pip wget git unzip curl \
-    libgl1-mesa-glx libglib2.0-0 libpng-dev libjpeg-dev libtiff-dev \
-    libopencv-dev python3-opencv \
-    qt5-default libqt5x11extras5-dev \
-    libx11-dev && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt update && apt install -y \
+    python3.10 python3.10-venv python3.10-dev python3-pip \
+    git cmake build-essential wget unzip \
+    libboost-all-dev libeigen3-dev libsuitesparse-dev \
+    qtbase5-dev libglew-dev freeglut3-dev \
+    libatlas-base-dev libopencv-dev libfreeimage-dev
 
-# Installa dipendenze Python
+# Installa Python deps
 COPY requirements.txt .
-RUN python3 -m pip install --no-cache-dir --upgrade pip && \
-    python3 -m pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --upgrade pip && pip3 install -r requirements.txt
 
-# Installa Meshroom (precompilato)
-RUN wget https://github.com/alicevision/meshroom/releases/download/v2023.2.0/Meshroom-2023.2.0-linux-cuda.tar.gz && \
-    tar -xzf Meshroom-2023.2.0-linux-cuda.tar.gz && \
-    mv Meshroom-2023.2.0 /opt/meshroom && \
-    rm Meshroom-2023.2.0-linux-cuda.tar.gz
+# Clona e compila COLMAP
+RUN git clone https://github.com/colmap/colmap.git /workspace/colmap && \
+    cd /workspace/colmap && mkdir build && cd build && \
+    cmake .. && make -j8 && make install
 
-# Imposta variabili d'ambiente per Meshroom
-ENV PATH="/opt/meshroom:$PATH"
-ENV LD_LIBRARY_PATH="/opt/meshroom/aliceVision/lib:${LD_LIBRARY_PATH}"
+# Copia codice progetto
+COPY . .
 
-# Copia il codice
-COPY . /app
-WORKDIR /app
-
-# Rendi eseguibile lo script di avvio
-RUN chmod +x /app/start.sh
-
-# Avvio
-ENTRYPOINT ["./start.sh"]
+# Comando di avvio
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
