@@ -6,21 +6,24 @@ def run_colmap_pipeline(input_dir, output_dir):
     sparse_dir = os.path.join(output_dir, "sparse")
     model_path = os.path.join(output_dir, "model.ply")
 
-    # Step 1: Feature extraction
+    # ✅ Assicura che le cartelle esistano
+    os.makedirs(output_dir, exist_ok=True)
+    os.makedirs(sparse_dir, exist_ok=True)
+
+    print("📦 Estrazione feature...")
     subprocess.run([
         "colmap", "feature_extractor",
         "--database_path", database_path,
         "--image_path", input_dir
     ], check=True)
 
-    # Step 2: Feature matching
+    print("🔁 Matching immagini...")
     subprocess.run([
         "colmap", "exhaustive_matcher",
         "--database_path", database_path
     ], check=True)
 
-    # Step 3: Sparse reconstruction
-    os.makedirs(sparse_dir, exist_ok=True)
+    print("🏗️ Ricostruzione sparsa...")
     subprocess.run([
         "colmap", "mapper",
         "--database_path", database_path,
@@ -28,7 +31,7 @@ def run_colmap_pipeline(input_dir, output_dir):
         "--output_path", sparse_dir
     ], check=True)
 
-    # Step 4: Convert model to PLY
+    print("🎯 Conversione in PLY...")
     subprocess.run([
         "colmap", "model_converter",
         "--input_path", os.path.join(sparse_dir, "0"),
