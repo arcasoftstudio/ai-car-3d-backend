@@ -8,10 +8,14 @@ ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
 
 echo "🔧 Aggiorno e installo dipendenze..."
 apt update && apt install -y tzdata && dpkg-reconfigure -f noninteractive tzdata
-apt install -y \
-    git cmake build-essential libboost-all-dev libeigen3-dev libopenimageio-dev \
-    libpng-dev libjpeg-dev libtiff-dev libraw-dev libopenexr-dev \
-    libopencv-dev qtbase5-dev libglew-dev
+apt update && apt install -y \
+    build-essential cmake git wget curl unzip \
+    libboost-all-dev libboost-system-dev libboost-thread-dev \
+    libeigen3-dev libopenimageio-dev openimageio-tools \
+    libpng-dev libjpeg-dev libtiff-dev libraw-dev libgl1 libglu1-mesa-dev \
+    libopenexr-dev libglew-dev libglib2.0-0 libopencv-dev \
+    qtbase5-dev qtchooser qt5-qmake qtbase5-dev-tools \
+    python3-pip zlib1g-dev pkg-config tzdata
 
 echo "🐙 Clono AliceVision..."
 git clone --recursive https://github.com/alicevision/AliceVision.git
