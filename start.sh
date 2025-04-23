@@ -8,4 +8,5 @@ export PATH="/opt/meshroom:$PATH"
 export LD_LIBRARY_PATH="/opt/meshroom/aliceVision/lib:$LD_LIBRARY_PATH"
 
 # Avvia FastAPI (backend)
-uvicorn app.main:app --host 0.0.0.0 --port 8000
+python3.10 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+
