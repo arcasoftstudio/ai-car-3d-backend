@@ -2,13 +2,13 @@ import os
 import subprocess
 
 def run_colmap_pipeline(input_dir, output_dir):
-    database_path = os.path.join(output_dir, "database.db")
     sparse_dir = os.path.join(output_dir, "sparse")
-    model_path = os.path.join(output_dir, "model.ply")
+    dense_dir = os.path.join(output_dir, "dense")
+    meshed_model = os.path.join(output_dir, "final_model.ply")
+    database_path = os.path.join(output_dir, "database.db")
 
-    # ✅ Assicura che le cartelle esistano
-    os.makedirs(output_dir, exist_ok=True)
     os.makedirs(sparse_dir, exist_ok=True)
+    os.makedirs(dense_dir, exist_ok=True)
 
     print("📦 Estrazione feature...")
     subprocess.run([
@@ -25,22 +25,45 @@ def run_colmap_pipeline(input_dir, output_dir):
 
     print("🏗️ Ricostruzione sparsa...")
     subprocess.run([
-    "colmap", "mapper",
-    "--database_path", database_path,
-    "--image_path", input_dir,
-    "--output_path", sparse_dir,
-    "--Mapper.num_threads", "4",
-    "--Mapper.init_min_tri_angle", "4.0",
-    "--Mapper.min_num_matches", "15"
-], check=True)
-
-
-    print("🎯 Conversione in PLY...")
-    subprocess.run([
-        "colmap", "model_converter",
-        "--input_path", os.path.join(sparse_dir, "0"),
-        "--output_path", model_path,
-        "--output_type", "PLY"
+        "colmap", "mapper",
+        "--database_path", database_path,
+        "--image_path", input_dir,
+        "--output_path", sparse_dir,
+        "--Mapper.init_min_tri_angle", "4.0",
+        "--Mapper.min_num_matches", "15"
     ], check=True)
 
-    return model_path
+    print("📷 Undistort immagini per ricostruzione densa...")
+    subprocess.run([
+        "colmap", "image_undistorter",
+        "--image_path", input_dir,
+        "--input_path", sparse_dir,
+        "--output_path", dense_dir,
+        "--output_type", "COLMAP"
+    ], check=True)
+
+    print("🧠 Dense stereo matching...")
+    subprocess.run([
+        "colmap", "patch_match_stereo",
+        "--workspace_path", dense_dir,
+        "--workspace_format", "COLMAP",
+        "--PatchMatchStereo.geom_consistency", "true"
+    ], check=True)
+
+    print("🌩️ Fusione nuvola di punti...")
+    subprocess.run([
+        "colmap", "stereo_fusion",
+        "--workspace_path", dense_dir,
+        "--workspace_format", "COLMAP",
+        "--input_type", "geometric",
+        "--output_path", os.path.join(dense_dir, "fused.ply")
+    ], check=True)
+
+    print("🔷 Generazione mesh finale...")
+    subprocess.run([
+        "colmap", "poisson_mesher",
+        "--input_path", os.path.join(dense_dir, "fused.ply"),
+        "--output_path", meshed_model
+    ], check=True)
+
+    return meshed_model
