@@ -33,7 +33,7 @@ async def upload_images(files: List[UploadFile] = File(...)):
 
 @app.get("/result/{session_id}")
 def get_result(session_id: str):
-    model_path = os.path.join(OUTPUT_DIR, session_id, "model.ply")  # 👈 output COLMAP
+    model_path = os.path.join(OUTPUT_DIR, session_id, "final_model.ply")
     if os.path.exists(model_path):
         return FileResponse(model_path, media_type="model/ply", filename="auto3d.ply")
     return {"error": "Modello non trovato"}
