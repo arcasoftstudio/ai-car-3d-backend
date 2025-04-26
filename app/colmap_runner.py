@@ -12,9 +12,9 @@ def run_colmap_pipeline(input_dir, output_dir):
         logger.error(f"❌ La directory di input non esiste: {input_dir}")
         return None
     
-    if len([f for f in os.listdir(input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]) == 0:
-        logger.error("❌ Nessuna immagine trovata nella directory di input!")
-        return None
+  #  if len([f for f in os.listdir(input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]) == 0:
+    ##    logger.error("❌ Nessuna immagine trovata nella directory di input!")
+     #   return None
     
     database_path = os.path.join(output_dir, "database.db")
     sparse_dir = os.path.join(output_dir, "sparse")
