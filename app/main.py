@@ -35,7 +35,9 @@ def get_status(session_id: str):
 def background_task(session_id: str, session_path: str):
     try:
         update_status(session_id, "processing")
-        run_colmap_pipeline(session_path, os.path.join(OUTPUT_DIR, session_id))
+        output_path = os.path.join(OUTPUT_DIR, session_id)
+        # Usa il nome di file esatto generato da COLMAP
+        model_file = run_colmap_pipeline(session_path, output_path)
         update_status(session_id, "done")
     except Exception as e:
         update_status(session_id, f"error: {str(e)}")
@@ -82,6 +84,7 @@ def status(session_id: str):
 # ✅ Download modello
 @app.get("/result/{session_id}")
 def get_result(session_id: str):
+    # Controllo che il modello finale esista nel percorso giusto
     model_path = os.path.join(OUTPUT_DIR, session_id, "final_model.ply")
     if os.path.exists(model_path):
         return FileResponse(model_path, media_type="model/ply", filename="auto3d.ply")
