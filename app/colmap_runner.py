@@ -1,166 +1,105 @@
 import os
 import subprocess
-import shutil
 import logging
 
-# Impostazione dei log
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
-def run_colmap_pipeline(input_dir, output_dir):
-    if not os.path.exists(input_dir):
-        logger.error(f"❌ La directory di input non esiste: {input_dir}")
-        return None
-    
-  #  if len([f for f in os.listdir(input_dir) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]) == 0:
-    ##    logger.error("❌ Nessuna immagine trovata nella directory di input!")
-     #   return None
-    
-    database_path = os.path.join(output_dir, "database.db")
-    sparse_dir = os.path.join(output_dir, "sparse")
-    dense_dir = os.path.join(output_dir, "dense")
-    stereo_dir = os.path.join(dense_dir, "stereo")
-    fused_ply = os.path.join(dense_dir, "fused.ply")
-    mesh_ply = os.path.join(dense_dir, "mesh.ply")
-    final_sparse_ply = os.path.join(output_dir, "sparse_model.ply")
+def run_colmap_pipeline(upload_folder):
+    images_path = os.path.join(upload_folder, "images")
+    sparse_path = os.path.join(upload_folder, "sparse")
+    dense_path = os.path.join(upload_folder, "dense")
+    database_path = os.path.join(upload_folder, "database.db")
+    final_mesh_path = os.path.join(upload_folder, "final_mesh.ply")
 
-    # Creazione delle cartelle di output
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(sparse_dir, exist_ok=True)
-    os.makedirs(dense_dir, exist_ok=True)
+    os.makedirs(images_path, exist_ok=True)
+    os.makedirs(sparse_path, exist_ok=True)
+    os.makedirs(dense_path, exist_ok=True)
 
-    # Estrazione delle feature
-    logger.info("\n📦 Estrazione feature...")
-    try:
-        subprocess.run([
-            "colmap", "feature_extractor",
-            "--database_path", database_path,
-            "--image_path", input_dir,
-            "--ImageReader.camera_model", "PINHOLE",
-            "--ImageReader.single_camera", "1",
-            "--ImageReader.default_focal_length_factor", "1.2"
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante l'estrazione delle feature: {e}")
-        return None
+    logger.info("\n🔍 Estrazione feature...")
+    subprocess.run([
+        "colmap", "feature_extractor",
+        "--database_path", database_path,
+        "--image_path", images_path,
+        "--ImageReader.single_camera", "1"
+    ], check=True)
 
-    # Matching delle immagini
-    logger.info("\n🔁 Matching immagini...")
-    try:
-        subprocess.run([
-            "colmap", "exhaustive_matcher",
-            "--database_path", database_path
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante il matching delle immagini: {e}")
-        return None
+    logger.info("\n🔍 Matching feature...")
+    subprocess.run([
+        "colmap", "exhaustive_matcher",
+        "--database_path", database_path
+    ], check=True)
 
-    # Ricostruzione sparsa
     logger.info("\n🏗️ Ricostruzione sparsa...")
-    try:
-        subprocess.run([
-            "colmap", "mapper",
-            "--database_path", database_path,
-            "--image_path", input_dir,
-            "--output_path", sparse_dir,
+    subprocess.run([
+        "colmap", "mapper",
+        "--database_path", database_path,
+        "--image_path", images_path,
+        "--output_path", sparse_path,
 
-            "--Mapper.multiple_models", "1",
-            "--Mapper.max_num_models", "50",
-            "--Mapper.max_model_overlap", "20",
-            "--Mapper.min_model_size", "10",
-            "--Mapper.extract_colors", "1",
-            "--Mapper.num_threads", "-1",
-            "--Mapper.min_num_matches", "15",
-            "--Mapper.snapshot_images_freq", "0",
+        "--Mapper.multiple_models", "1",
+        "--Mapper.max_num_models", "50",
+        "--Mapper.max_model_overlap", "20",
+        "--Mapper.min_model_size", "10",
+        "--Mapper.extract_colors", "1",
+        "--Mapper.num_threads", "-1",
+        "--Mapper.min_num_matches", "15",
+        "--Mapper.snapshot_images_freq", "0",
 
-            "--Mapper.init_image_id1", "-1",
-            "--Mapper.init_image_id2", "-1",
-            "--Mapper.init_num_trials", "200",
-            "--Mapper.init_min_num_inliers", "100",
-            "--Mapper.init_max_error", "4.0",  # Non rimuovere questa parte
-            "--Mapper.init_max_forward_motion", "0.95",
-            "--Mapper.init_min_tri_angle", "16.0",
-            "--Mapper.init_max_reg_trials", "2",
+        "--Mapper.init_image_id1", "-1",
+        "--Mapper.init_image_id2", "-1",
+        "--Mapper.init_num_trials", "200",
+        "--Mapper.init_min_num_inliers", "100",
+        "--Mapper.init_max_error", "4.0",
+        "--Mapper.init_max_forward_motion", "0.95",
+        "--Mapper.init_min_tri_angle", "16.0",
+        "--Mapper.init_max_reg_trials", "2",
 
-            "--Mapper.abs_pose_max_error", "12.0",
-            "--Mapper.abs_pose_min_num_inliers", "30",
-            "--Mapper.abs_pose_min_inlier_ratio", "0.25",
-            "--Mapper.max_reg_trials", "3",
+        "--Mapper.abs_pose_max_error", "12.0",
+        "--Mapper.abs_pose_min_num_inliers", "30",
+        "--Mapper.abs_pose_min_inlier_ratio", "0.25",
+        "--Mapper.max_reg_trials", "3",
 
-            "--Mapper.min_focal_length_ratio", "0.1",
-            "--Mapper.max_focal_length_ratio", "10.0",
-            "--Mapper.max_extra_param", "1.0",
-            "--Mapper.filter_max_reproj_error", "4.0",
-            "--Mapper.filter_min_tri_angle", "1.5"
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante la ricostruzione sparsa: {e}")
-        return None
+        "--Mapper.min_focal_length_ratio", "0.1",
+        "--Mapper.max_focal_length_ratio", "10.0",
+        "--Mapper.max_extra_param", "1.0",
+        "--Mapper.filter_max_reproj_error", "4.0",
+        "--Mapper.filter_min_tri_angle", "1.5"
+    ], check=True)
 
-    # Verifica la presenza del modello sparso
-    model_dir = os.path.join(sparse_dir, "0")
-    if not os.path.exists(model_dir):
-        logger.error(f"❌ Nessun modello sparso trovato nella cartella {model_dir}")
-        return None
+    logger.info("\n🖼️ Undistort immagini...")
+    subprocess.run([
+        "colmap", "image_undistorter",
+        "--image_path", images_path,
+        "--input_path", os.path.join(sparse_path, "0"),
+        "--output_path", dense_path,
+        "--output_type", "COLMAP",
+        "--max_image_size", "2000"
+    ], check=True)
 
-    # Conversione del modello sparso in PLY
-    logger.info("\n🎯 Conversione modello sparso in PLY...")
-    try:
-        subprocess.run([
-            "colmap", "model_converter",
-            "--input_path", model_dir,
-            "--output_path", final_sparse_ply,
-            "--output_type", "PLY"
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante la conversione del modello sparso in PLY: {e}")
-        return None
+    logger.info("\n🧩 Ricostruzione densa...")
+    subprocess.run([
+        "colmap", "patch_match_stereo",
+        "--workspace_path", dense_path,
+        "--workspace_format", "COLMAP",
+        "--PatchMatchStereo.geom_consistency", "true"
+    ], check=True)
 
-    # Ricostruzione densa con PatchMatch Stereo
-    logger.info("\n🔍 Ricostruzione densa: PatchMatch stereo...")
-    try:
-        subprocess.run([
-            "colmap", "patch_match_stereo",
-            "--workspace_path", output_dir,
-            "--workspace_format", "COLMAP",
-            "--PatchMatchStereo.geom_consistency", "true"
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante la ricostruzione densa con PatchMatch stereo: {e}")
-        return None
+    logger.info("\n🔗 Fusione stereo...")
+    subprocess.run([
+        "colmap", "stereo_fusion",
+        "--workspace_path", dense_path,
+        "--workspace_format", "COLMAP",
+        "--input_type", "geometric",
+        "--output_path", os.path.join(dense_path, "fused.ply")
+    ], check=True)
 
-    # Fusione delle mappe di profondità
-    logger.info("\n🌩️ Fusione mappe di profondità...")
-    try:
-        subprocess.run([
-            "colmap", "stereo_fusion",
-            "--workspace_path", output_dir,
-            "--workspace_format", "COLMAP",
-            "--input_type", "geometric",
-            "--output_path", fused_ply
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante la fusione delle mappe di profondità: {e}")
-        return None
+    logger.info("\n🛠️ Creazione mesh...")
+    subprocess.run([
+        "colmap", "poisson_mesher",
+        "--input_path", os.path.join(dense_path, "fused.ply"),
+        "--output_path", final_mesh_path
+    ], check=True)
 
-    # Generazione della mesh finale
-    logger.info("\n🧱 Generazione mesh...")
-    try:
-        subprocess.run([
-            "colmap", "poisson_mesher",
-            "--input_path", fused_ply,
-            "--output_path", mesh_ply
-        ], check=True)
-    except subprocess.CalledProcessError as e:
-        logger.error(f"❌ Errore durante la generazione della mesh finale: {e}")
-        return None
-
-      # Rinomina fused.ply in final_model.ply
-    final_model_path = os.path.join(output_dir, "final_model.ply")
-    if os.path.exists(fused_ply):
-        shutil.copy(fused_ply, final_model_path)
-        logger.info(f"\n✅ Nuvola di punti finale salvata in: {final_model_path}")
-        return final_model_path
-    else:
-        logger.error(f"❌ File fused.ply non trovato: {fused_ply}")
-        return None
+    logger.info("\n✅ Pipeline COLMAP completata!")
+    return final_mesh_path
