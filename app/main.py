@@ -42,7 +42,6 @@ def background_task(session_id: str, session_path: str):
     except Exception as e:
         update_status(session_id, f"error: {str(e)}")
 
-# ✅ Upload ZIP
 @app.post("/upload_zip")
 async def upload_zip(file: UploadFile = File(...)):
     session_id = str(uuid.uuid4())
@@ -57,6 +56,12 @@ async def upload_zip(file: UploadFile = File(...)):
         for member in zip_ref.infolist():
             if member.filename.lower().endswith((".jpg", ".jpeg", ".png")):
                 zip_ref.extract(member, session_path)
+                # Log per confermare l'estrazione
+                print(f"Estratto: {os.path.join(session_path, member.filename)}")
+
+    # Log per vedere i file nella directory
+    extracted_files = os.listdir(session_path)
+    print(f"File nella directory {session_path}: {extracted_files}")
 
     threading.Thread(target=background_task, args=(session_id, session_path), daemon=True).start()
     return {"session_id": session_id}
