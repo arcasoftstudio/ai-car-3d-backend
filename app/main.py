@@ -84,8 +84,17 @@ def status(session_id: str):
 # ✅ Download modello
 @app.get("/result/{session_id}")
 def get_result(session_id: str):
-    # Controllo che il modello finale esista nel percorso giusto
+    # Controlla lo stato della sessione
+    status = get_status(session_id)
+    if status["status"] == "processing":
+        return {"error": "Elaborazione in corso, riprova più tardi"}
+    elif status["status"].startswith("error"):
+        return {"error": status["status"]}
+    elif status["status"] != "done":
+        return {"error": "Sessione non trovata o non completata"}
+
+    # Controllo che il modello finale esista
     model_path = os.path.join(OUTPUT_DIR, session_id, "final_model.ply")
     if os.path.exists(model_path):
         return FileResponse(model_path, media_type="model/ply", filename="auto3d.ply")
-    return {"error": "Modello non trovato o non ancora pronto"}
+    return {"error": "Modello non trovato"}
