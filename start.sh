@@ -20,17 +20,16 @@ echo "🐍 Installazione dipendenze Python..."
 pip install --upgrade pip
 pip install -r /workspace/ai-car-3d-backend/requirements.txt
 
-echo "📥 Clonazione COLMAP..."
-git clone https://github.com/colmap/colmap.git /workspace/colmap
+echo "📥 Clonazione COLMAP 3.11..."
+git clone --branch 3.11 https://github.com/colmap/colmap.git /workspace/colmap
 
 echo "⚙️ Compilazione COLMAP..."
 cd /workspace/colmap
 mkdir build && cd build
 cmake ..
-make -j8
+make -j$(nproc)
 make install
 
 echo "🚀 Avvio FastAPI..."
 cd /workspace/ai-car-3d-backend
 uvicorn app.main:app --host 0.0.0.0 --port 8000
-
