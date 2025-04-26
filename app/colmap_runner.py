@@ -101,5 +101,9 @@ def run_colmap_pipeline(upload_folder):
         "--output_path", final_mesh_path
     ], check=True)
 
+    # Controllo finale: il file finale esiste davvero?
+    if not os.path.exists(final_mesh_path):
+        raise Exception("⚠️ Errore: final_mesh.ply non trovato dopo la pipeline COLMAP.")
+
     logger.info("\n✅ Pipeline COLMAP completata!")
     return final_mesh_path
