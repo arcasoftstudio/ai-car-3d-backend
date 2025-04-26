@@ -155,8 +155,12 @@ def run_colmap_pipeline(input_dir, output_dir):
         logger.error(f"❌ Errore durante la generazione della mesh finale: {e}")
         return None
 
-    # Salva la mesh finale nella cartella di output
-    shutil.copy(mesh_ply, final_sparse_ply)  # Salvataggio diretto del modello mesh
-
-    logger.info(f"\n✅ Mesh finale salvata in: {final_sparse_ply}")
-    return final_sparse_ply
+      # Rinomina fused.ply in final_model.ply
+    final_model_path = os.path.join(output_dir, "final_model.ply")
+    if os.path.exists(fused_ply):
+        shutil.copy(fused_ply, final_model_path)
+        logger.info(f"\n✅ Nuvola di punti finale salvata in: {final_model_path}")
+        return final_model_path
+    else:
+        logger.error(f"❌ File fused.ply non trovato: {fused_ply}")
+        return None
