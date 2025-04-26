@@ -3,8 +3,8 @@
 set -e
 export DEBIAN_FRONTEND=noninteractive
 
-# ❌ Pulizia
-rm -rf /workspace/colmap /workspace/uploads /workspace/outputs
+# Pulizia
+rm -rf /workspace/colmap /workspace/uploads /workspace/outputs /workspace/status
 
 echo "🔧 Installazione dipendenze di sistema..."
 apt update && apt install -y \
