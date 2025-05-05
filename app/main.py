@@ -70,7 +70,8 @@ async def check_status(file_id: str):
 
 @app.get("/download/{file_id}")
 async def download_file(file_id: str):
-    file_path = os.path.join(UPLOAD_FOLDER, file_id, "final_mesh.ply")
+    file_path = os.path.join(UPLOAD_FOLDER, file_id, "sparse", "0", "points3D.ply")
     if os.path.exists(file_path):
-        return FileResponse(file_path, media_type='application/octet-stream', filename="final_mesh.ply")
+        return FileResponse(file_path, media_type='application/octet-stream', filename="sparse_points.ply")
     return {"error": "File not found"}
+
