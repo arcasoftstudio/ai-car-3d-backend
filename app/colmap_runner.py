@@ -67,7 +67,8 @@ def run_colmap_pipeline(upload_folder):
         "--Mapper.filter_min_tri_angle", "1.5"
     ], check=True)
 
-    logger.info("\n🖼️ Undistort immagini...")
+  """ 
+  logger.info("\n🖼️ Undistort immagini...")
     subprocess.run([
         "colmap", "image_undistorter",
         "--image_path", images_path,
@@ -89,21 +90,32 @@ def run_colmap_pipeline(upload_folder):
     subprocess.run([
         "colmap", "stereo_fusion",
         "--workspace_path", dense_path,
-        "--workspace_format", "COLMAP",
+     "--workspace_format", "COLMAP",
         "--input_type", "geometric",
-        "--output_path", os.path.join(dense_path, "fused.ply")
+       "--output_path", os.path.join(dense_path, "fused.ply")
     ], check=True)
 
     logger.info("\n🛠️ Creazione mesh...")
     subprocess.run([
         "colmap", "poisson_mesher",
         "--input_path", os.path.join(dense_path, "fused.ply"),
-        "--output_path", final_mesh_path
+      "--output_path", final_mesh_path
     ], check=True)
 
-    # Controllo finale: il file finale esiste davvero?
+   # Controllo finale: il file finale esiste davvero?
     if not os.path.exists(final_mesh_path):
-        raise Exception("⚠️ Errore: final_mesh.ply non trovato dopo la pipeline COLMAP.")
+     raise Exception("⚠️ Errore: final_mesh.ply non trovato dopo la pipeline COLMAP.")
 
     logger.info("\n✅ Pipeline COLMAP completata!")
     return final_mesh_path
+    """
+
+
+    # Controllo finale: sparse .ply esiste?
+    sparse_ply_path = os.path.join(sparse_path, "0", "points3D.ply")
+    if not os.path.exists(sparse_ply_path):
+        raise Exception("⚠️ Errore: points3D.ply non trovato dopo la pipeline COLMAP.")
+
+    logger.info(f"\n✅ Sparse point cloud completata! File: {sparse_ply_path}")
+    return sparse_ply_path
+
