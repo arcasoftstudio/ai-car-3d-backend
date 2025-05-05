@@ -1,4 +1,3 @@
-
 from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from typing import List
@@ -70,8 +69,7 @@ async def check_status(file_id: str):
 
 @app.get("/download/{file_id}")
 async def download_file(file_id: str):
-    file_path = os.path.join(UPLOAD_FOLDER, file_id, "sparse", "0", "points3D.ply")
+    file_path = os.path.join(UPLOAD_FOLDER, file_id, "final_mesh.ply")
     if os.path.exists(file_path):
-        return FileResponse(file_path, media_type='application/octet-stream', filename="sparse_points.ply")
+        return FileResponse(file_path, media_type='application/octet-stream', filename="final_mesh.ply")
     return {"error": "File not found"}
-
