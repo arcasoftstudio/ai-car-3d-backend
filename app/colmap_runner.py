@@ -24,12 +24,12 @@ def run_colmap_pipeline(upload_folder):
         "--ImageReader.single_camera", "1"
     ], check=True)
 
-logger.info("\n🔍 Matching sequenziale (come nella GUI)...")
-subprocess.run([
-    "colmap", "sequential_matcher",
-    "--database_path", database_path,
-    "--SiftMatching.guided_matching", "1"
-], check=True)
+    logger.info("\n🔍 Matching sequenziale (come nella GUI)...")
+    subprocess.run([
+        "colmap", "sequential_matcher",
+        "--database_path", database_path,
+        "--SiftMatching.guided_matching", "1"
+    ], check=True)
 
     logger.info("\n🏗️ Ricostruzione sparsa...")
     subprocess.run([
