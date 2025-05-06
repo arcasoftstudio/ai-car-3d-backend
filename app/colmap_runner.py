@@ -77,40 +77,37 @@ def run_colmap_pipeline(upload_folder):
         "--max_image_size", "4096"
     ], check=True)
 
-logger.info("\n🧩 Ricostruzione densa ottimizzata...")
-subprocess.run([
-    "colmap", "patch_match_stereo",
-    "--workspace_path", dense_path,
-    "--workspace_format", "COLMAP",
-    "--PatchMatchStereo.geom_consistency", "true",
-    "--PatchMatchStereo.window_radius", "7",
-    "--PatchMatchStereo.num_samples", "20",
-    "--PatchMatchStereo.max_image_size", "4096",
-    "--PatchMatchStereo.cache_size", "64",
-    "--PatchMatchStereo.filter", "true"
-], check=True)
+    logger.info("\n🧩 Ricostruzione densa ottimizzata...")
+    subprocess.run([
+        "colmap", "patch_match_stereo",
+        "--workspace_path", dense_path,
+        "--workspace_format", "COLMAP",
+        "--PatchMatchStereo.geom_consistency", "true",
+        "--PatchMatchStereo.window_radius", "7",
+        "--PatchMatchStereo.num_samples", "20",
+        "--PatchMatchStereo.max_image_size", "4096",
+        "--PatchMatchStereo.cache_size", "64",
+        "--PatchMatchStereo.filter", "true"
+    ], check=True)
 
+    logger.info("\n🔗 Fusione stereo migliorata...")
+    subprocess.run([
+        "colmap", "stereo_fusion",
+        "--workspace_path", dense_path,
+        "--workspace_format", "COLMAP",
+        "--input_type", "geometric",
+        "--output_path", os.path.join(dense_path, "fused.ply"),
+        "--StereoFusion.min_num_pixels", "5",
+        "--StereoFusion.max_image_size", "4096"
+    ], check=True)
 
-logger.info("\n🔗 Fusione stereo migliorata...")
-subprocess.run([
-    "colmap", "stereo_fusion",
-    "--workspace_path", dense_path,
-    "--workspace_format", "COLMAP",
-    "--input_type", "geometric",
-    "--output_path", os.path.join(dense_path, "fused.ply"),
-    "--StereoFusion.min_num_pixels", "5",
-    "--StereoFusion.max_image_size", "4096"
-], check=True)
-
-
-logger.info("\n🛠️ Creazione mesh con pulizia...")
-subprocess.run([
-    "colmap", "poisson_mesher",
-    "--input_path", os.path.join(dense_path, "fused.ply"),
-    "--output_path", final_mesh_path,
-    "--PoissonMeshing.trim", "10"
-], check=True)
-
+    logger.info("\n🛠️ Creazione mesh con pulizia...")
+    subprocess.run([
+        "colmap", "poisson_mesher",
+        "--input_path", os.path.join(dense_path, "fused.ply"),
+        "--output_path", final_mesh_path,
+        "--PoissonMeshing.trim", "10"
+    ], check=True)
 
     # Controllo finale: il file finale esiste davvero?
     if not os.path.exists(final_mesh_path):
