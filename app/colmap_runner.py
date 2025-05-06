@@ -86,12 +86,12 @@ def run_colmap_pipeline(upload_folder):
         "colmap", "patch_match_stereo",
         "--workspace_path", dense_path,
         "--workspace_format", "COLMAP",
-        "--PatchMatchStereo.geom_consistency", "true",
+        "--PatchMatchStereo.geom_consistency", "1",
         "--PatchMatchStereo.window_radius", "7",
         "--PatchMatchStereo.num_samples", "20",
         "--PatchMatchStereo.max_image_size", "4096",
         "--PatchMatchStereo.cache_size", "64",
-        "--PatchMatchStereo.filter", "true"
+        "--PatchMatchStereo.filter", "1"
     ], check=True)
 
     # Verifica depth maps
