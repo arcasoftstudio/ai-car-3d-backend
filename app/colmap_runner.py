@@ -97,4 +97,11 @@ def run_colmap_pipeline(upload_folder):
     ], check=True)
 
     # Controllo finale: il file finale esiste davvero?
-    if
+    if not os.path.exists(final_mesh_path):
+        raise Exception("⚠️ Errore: final_mesh.ply non trovato dopo la pipeline COLMAP.")
+
+    mesh_size = os.path.getsize(final_mesh_path) / (1024 * 1024)
+    logger.info(f"🧱 Mesh finale creata: {final_mesh_path} - {mesh_size:.2f} MB")
+
+    logger.info("\n✅ Pipeline COLMAP completata!")
+    return final_mesh_path
