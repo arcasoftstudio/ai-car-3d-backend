@@ -36,7 +36,35 @@ def run_colmap_dense_pointcloud(upload_folder):
         "--database_path", database_path,
         "--image_path", images_path,
         "--output_path", sparse_path,
-        "--Mapper.extract_colors", "1"
+
+        "--Mapper.multiple_models", "1",
+        "--Mapper.max_num_models", "50",
+        "--Mapper.max_model_overlap", "20",
+        "--Mapper.min_model_size", "10",
+        "--Mapper.extract_colors", "1",
+        "--Mapper.num_threads", "-1",
+        "--Mapper.min_num_matches", "15",
+        "--Mapper.snapshot_images_freq", "0",
+
+        "--Mapper.init_image_id1", "-1",
+        "--Mapper.init_image_id2", "-1",
+        "--Mapper.init_num_trials", "200",
+        "--Mapper.init_min_num_inliers", "100",
+        "--Mapper.init_max_error", "4.0",
+        "--Mapper.init_max_forward_motion", "0.95",
+        "--Mapper.init_min_tri_angle", "16.0",
+        "--Mapper.init_max_reg_trials", "2",
+
+        "--Mapper.abs_pose_max_error", "12.0",
+        "--Mapper.abs_pose_min_num_inliers", "30",
+        "--Mapper.abs_pose_min_inlier_ratio", "0.25",
+        "--Mapper.max_reg_trials", "3",
+
+        "--Mapper.min_focal_length_ratio", "0.1",
+        "--Mapper.max_focal_length_ratio", "10.0",
+        "--Mapper.max_extra_param", "1.0",
+        "--Mapper.filter_max_reproj_error", "4.0",
+        "--Mapper.filter_min_tri_angle", "1.5"
     ], check=True)
 
     # Verifica sparse
