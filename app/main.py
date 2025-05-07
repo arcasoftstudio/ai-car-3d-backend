@@ -70,6 +70,11 @@ async def check_status(file_id: str):
 @app.get("/download/{file_id}")
 async def download_file(file_id: str):
     file_path = os.path.join(UPLOAD_FOLDER, file_id, "dense", "fused.ply")
-filename="fused_pointcloud.ply"
-return FileResponse(file_path, media_type='application/octet-stream', filename="final_mesh.ply")
+    if os.path.exists(file_path):
+        return FileResponse(
+            file_path,
+            media_type='application/octet-stream',
+            filename="fused_pointcloud.ply"
+        )
     return {"error": "File not found"}
+
