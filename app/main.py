@@ -7,7 +7,7 @@ import os
 import zipfile
 import threading
 import json
-from app.colmap_runner import run_colmap_pipeline
+from app.colmap_runner import run_colmap_dense_pointcloud
 
 app = FastAPI()
 
@@ -18,7 +18,7 @@ os.makedirs(STATUS_FOLDER, exist_ok=True)
 
 def process_colmap(file_id, file_folder):
     try:
-        run_colmap_pipeline(file_folder)
+        run_colmap_dense_pointcloud(file_folder)
         # ✅ Salva stato completato
         status_path = os.path.join(STATUS_FOLDER, f"{file_id}.json")
         with open(status_path, "w") as f:
@@ -69,7 +69,7 @@ async def check_status(file_id: str):
 
 @app.get("/download/{file_id}")
 async def download_file(file_id: str):
-    file_path = os.path.join(UPLOAD_FOLDER, file_id, "final_mesh.ply")
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type='application/octet-stream', filename="final_mesh.ply")
+    file_path = os.path.join(UPLOAD_FOLDER, file_id, "dense", "fused.ply")
+filename="fused_pointcloud.ply"
+return FileResponse(file_path, media_type='application/octet-stream', filename="final_mesh.ply")
     return {"error": "File not found"}
